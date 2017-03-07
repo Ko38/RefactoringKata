@@ -101,6 +101,7 @@ namespace RefactoringKata
                     return "yellow";
                 default:
                     return "no color";
+
             }
         }
     }
