@@ -4,7 +4,7 @@ namespace RefactoringKata
 {
     public class OrdersWriter
     {
-        private Orders _orders;
+        private readonly Orders _orders;
 
         public OrdersWriter(Orders orders)
         {
@@ -18,45 +18,26 @@ namespace RefactoringKata
             for (var i = 0; i < _orders.GetOrdersCount(); i++)
             {
                 var order = _orders.GetOrder(i);
-                sb.Append("{");
-                sb.Append("\"id\": ");
-                sb.Append(order.GetOrderId());
-                sb.Append(", ");
-                sb.Append("\"products\": [");
+                sb.AppendFormat("{0}\"id\": {1}, \"products\": [", "{",  order.GetOrderId());
 
                 for (var j = 0; j < order.GetProductsCount(); j++)
                 {
                     var product = order.GetProduct(j);
-                    sb.Append("{");
-                    sb.Append("\"code\": \"");
-                    sb.Append(product.Code);
-                    sb.Append("\", ");
-                    sb.Append("\"color\": \"");
-                    sb.Append(getColorFor(product));
-                    sb.Append("\", ");
+                    sb.AppendFormat("{0}\"code\": \"{1}\", \"color\": \"{2}\", ", "{", product.Code, GetColorFor(product));
 
                     if (product.Size != Product.SIZE_NOT_APPLICABLE)
                     {
-                        sb.Append("\"size\": \"");
-                        sb.Append(getSizeFor(product));
-                        sb.Append("\", ");
+                        sb.AppendFormat("\"size\": \"{0}\", ", GetSizeFor(product));
                     }
 
-                    sb.Append("\"price\": ");
-                    sb.Append(product.Price);
-                    sb.Append(", ");
-                    sb.Append("\"currency\": \"");
-                    sb.Append(product.Currency);
-                    sb.Append("\"}, ");
+                    sb.AppendFormat("\"price\": {0}, \"currency\": \"{1}\"{2}, ", product.Price, product.Currency, "}");
                 }
 
                 if (order.GetProductsCount() > 0)
                 {
                     sb.Remove(sb.Length - 2, 2);
                 }
-
-                sb.Append("]");
-                sb.Append("}, ");
+                sb.AppendFormat("]{0}, ", "}");
             }
 
             if (_orders.GetOrdersCount() > 0)
@@ -68,40 +49,29 @@ namespace RefactoringKata
         }
 
 
-        private string getSizeFor(Product product)
+        private static string GetSizeFor(Product product)
         {
-            switch (product.Size)
+            var sizes = new[] {"Invalid Size", "XS", "S", "M", "L", "XL", "XXL"};
+            try
             {
-                case 1:
-                    return "XS";
-                case 2:
-                    return "S";
-                case 3:
-                    return "M";
-                case 4:
-                    return "L";
-                case 5:
-                    return "XL";
-                case 6:
-                    return "XXL";
-                default:
-                    return "Invalid Size";
+                return sizes[product.Size];
+            }
+            catch
+            {
+                return sizes[0];
             }
         }
 
-        private string getColorFor(Product product)
+        private static string GetColorFor(Product product)
         {
-            switch (product.Color)
+            var colors = new[] {"no color", "blue", "red", "yellow"};
+            try
             {
-                case 1:
-                    return "blue";
-                case 2:
-                    return "red";
-                case 3:
-                    return "yellow";
-                default:
-                    return "no color";
-
+                return colors[product.Color];
+            }
+            catch
+            {
+                return colors[0];
             }
         }
     }
